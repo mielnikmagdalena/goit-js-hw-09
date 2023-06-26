@@ -88,7 +88,7 @@ function startCountdown() {
 }
 
 // Nasłuchiwanie kliknięcia przycisku "Start":
-//Ten fragment kodu nasłuchuje na kliknięcie przycisku "Start" i uruchamia odliczanie, ustawiając interwał odliczania (setInterval) z wywołaniem funkcji startCountdown co 1000 milisekund (czyli co 1 sekundę).
+// Ten fragment kodu nasłuchuje na kliknięcie przycisku "Start" i uruchamia odliczanie, ustawiając interwał odliczania (setInterval) z wywołaniem funkcji startCountdown co 1000 milisekund (czyli co 1 sekundę).
 startBtn.addEventListener('click', () => {
   countdownInterval = setInterval(startCountdown, 1000);
 });
