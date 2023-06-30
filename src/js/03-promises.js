@@ -1,3 +1,4 @@
+import Notiflix from 'notiflix';
 //Definicja funkcji createPromise(position, delay):
 //Ta funkcja przyjmuje dwa argumenty, position i delay. Tworzy nowy obiekt Promise, który wykonuje asynchroniczne działanie.
 //Losuje wartość shouldResolve - wartość logiczną, która określa, czy obietnica powinna zostać rozwiązana czy odrzucona. Szansa na rozwiązanie obietnicy wynosi 70% (większa niż 0,3).
@@ -42,10 +43,12 @@ form.addEventListener('submit', event => {
     //Wewnątrz metody then() lub catch() zostaje wyświetlony komunikat w konsoli, informujący o rozwiązaniu lub odrzuceniu obietnicy, wraz z informacjami o pozycji i opóźnieniu.
     createPromise(position, promiseDelay)
       .then(({ position, delay }) => {
-        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        //console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        Notiflix.Notify.success(`Fulfilled promise ${position} in ${delay}ms`);
       })
       .catch(({ position, delay }) => {
-        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+        //console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+        Notiflix.Notify.failure(`Rejected promise ${position} in ${delay}ms`);
       });
   }
   //Na końcu kodu, po obsłudze zdarzenia, formularz jest resetowany za pomocą form.reset(), co powoduje wyczyszczenie wprowadzonych wartości w polach formularza.

@@ -2,20 +2,23 @@
 //Ten fragment kodu importuje bibliotekę flatpickr oraz jej style CSS. Dzięki temu będę mogła użyć flatpickr do tworzenia interfejsu wyboru daty i godziny.
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
 
 // Pobranie elementów DOM:
 //Ten fragment kodu pobiera referencje do elementów DOM, takich jak pole wyboru daty, przycisk "Start" oraz elementy, w których będą wyświetlane wartości licznika.
 const datetimePicker = document.getElementById('datetime-picker');
-const startBtn = document.getElementById('start-btn');
-const daysElement = document.getElementById('days');
-const hoursElement = document.getElementById('hours');
-const minutesElement = document.getElementById('minutes');
-const secondsElement = document.getElementById('seconds');
+
+const startBtn = document.querySelector('[data-start]');
+const daysElement = document.querySelector('[data-days]');
+const hoursElement = document.querySelector('[data-hours]');
+const minutesElement = document.querySelector('[data-minutes]');
+const secondsElement = document.querySelector('[data-seconds]');
 
 // Zmienne dla licznika odliczania:
 //Te zmienne będą przechowywać interwał odliczania oraz wybraną datę końcową.
 let countdownInterval;
 let targetDate;
+let timeDifference;
 
 // Inicjalizacja flatpickr:
 //Ten fragment kodu inicjalizuje flatpickr na elemencie datetimePicker, ustawiając opcje takie jak możliwość wyboru godziny (enableTime: true), format 24-godzinny (time_24hr: true), domyślną datę jako bieżącą (defaultDate: new Date()), inkrementację minut co 1 (minuteIncrement: 1).
@@ -30,16 +33,19 @@ flatpickr(datetimePicker, {
     const currentDate = new Date();
 
     if (selectedDate <= currentDate) {
-      window.alert('Please choose a date in the future');
+      //window.alert('Please choose a date in the future');
+      Notiflix.Notify.failure('Wybierz datę z przyszłości');
       startBtn.disabled = true;
     } else {
       startBtn.disabled = false;
       targetDate = selectedDate;
+      timeCounter = selectedDate;
+      Notiflix.Notify.success('Data wybrana poprawnie');
     }
   },
 });
 
-// Funkcja pomocnicza addLeadingZero:
+//Funkcja pomocnicza addLeadingZero:
 //Ta funkcja dodaje wiodące zero do wartości jednocyfrowych, używając metody padStart. Zwraca sformatowaną wartość.
 function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
@@ -74,21 +80,24 @@ function updateTimerDisplay({ days, hours, minutes, seconds }) {
 //Jeśli różnica czasu wynosi 0 lub mniej, oznacza to, że czas się skończył, więc odliczanie zostaje zatrzymane (clearInterval(countdownInterval)) i wartości licznika są aktualizowane na 0.
 //W przeciwnym razie oblicza pozostały czas, wywołuje funkcję updateTimerDisplay i aktualizuje wyświetlane wartości licznika.
 function startCountdown() {
-  const currentTime = new Date().getTime();
-  const timeDifference = targetDate.getTime() - currentTime;
-
   if (timeDifference <= 0) {
     clearInterval(countdownInterval);
     updateTimerDisplay({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+    Notiflix.Notify.success('Koniec Odliczania');
     return;
   }
-
   const remainingTime = convertMs(timeDifference);
   updateTimerDisplay(remainingTime);
+  timeDifference -= 1000;
 }
 
 // Nasłuchiwanie kliknięcia przycisku "Start":
 // Ten fragment kodu nasłuchuje na kliknięcie przycisku "Start" i uruchamia odliczanie, ustawiając interwał odliczania (setInterval) z wywołaniem funkcji startCountdown co 1000 milisekund (czyli co 1 sekundę).
 startBtn.addEventListener('click', () => {
+  const currentTime = new Date().getTime();
+  timeDifference = targetDate.getTime() - currentTime;
+  updateTimerDisplay(convertMs(timeDifference));
   countdownInterval = setInterval(startCountdown, 1000);
+  Notiflix.Notify.info('Start odliczania');
 });
+startBtn.setAttribute('disabled', '');
